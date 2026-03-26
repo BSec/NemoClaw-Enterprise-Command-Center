@@ -425,6 +425,6 @@ pytest tests/ --cov=nemoclaw
 
 ## 👤 Author
 
-**Bhaskar Puppala**  
+**Bhasker Patel**  
 🔗 LinkedIn: [https://www.linkedin.com/in/bhaskerkpatel/](https://www.linkedin.com/in/bhaskerkpatel/)
 
