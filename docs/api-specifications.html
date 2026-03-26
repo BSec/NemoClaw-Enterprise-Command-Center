@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Api Specifications</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+            color: #333;
+        }
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px 40px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .header h1 { margin: 0; font-size: 2em; }
+        .content {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 { color: #1e3c72; border-bottom: 3px solid #2a5298; padding-bottom: 10px; }
+        h2 { color: #2a5298; margin-top: 30px; border-bottom: 2px solid #eee; padding-bottom: 8px; }
+        h3 { color: #444; }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+            background: white;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background: #1e3c72;
+            color: white;
+            font-weight: 600;
+        }
+        tr:nth-child(even) { background: #f8f9fa; }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+        }
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 6px;
+            overflow-x: auto;
+            line-height: 1.4;
+        }
+        pre code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+        }
+        a { color: #2a5298; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        ul, ol { padding-left: 30px; }
+        li { margin: 8px 0; }
+        blockquote {
+            border-left: 4px solid #2a5298;
+            margin: 20px 0;
+            padding: 15px 20px;
+            background: #f8f9fa;
+            font-style: italic;
+        }
+        .nav {
+            background: #1e3c72;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        .nav a {
+            color: white;
+            margin-right: 20px;
+            font-weight: 500;
+        }
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            border-top: 1px solid #ddd;
+            margin-top: 40px;
+        }
+        @media print {
+            body { background: white; }
+            .header { background: #1e3c72 !important; -webkit-print-color-adjust: exact; }
+            .content { box-shadow: none; }
+        }
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .content { padding: 20px; }
+            .header { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="index.html">← Documentation Index</a>
+        <a href="../README.html">README</a>
+    </div>
+    
+    <div class="header">
+        <h1>📄 Api Specifications</h1>
+    </div>
+    
+    <div class="content">
+        <h1 id="nemoclaw-enterprise-command-center-api-specifications">NemoClaw Enterprise Command Center - API Specifications</h1>
+<p><strong>Version</strong>: 2.1.0<br />
+<strong>Classification</strong>: Internal Use<br />
+<strong>Last Updated</strong>: March 27, 2026<br />
+<strong>Protocol</strong>: RESTful API over HTTPS<br />
+<strong>Base URL</strong>: <code>https://api.nemoclaw.internal/v2</code>  </p>
+<hr />
+<h2 id="1-api-overview">1. API Overview</h2>
+<h3 id="11-authentication">1.1 Authentication</h3>
+<p>All API requests require authentication using <strong>JWT Bearer tokens</strong>.</p>
+<p><strong>Header Format</strong>:</p>
+<pre><code>Authorization: Bearer &lt;jwt_token&gt;
+</code></pre>
+<p><strong>Token Acquisition</strong>:<br />
+1. Authenticate via <code>/auth/login</code> endpoint<br />
+2. Receive JWT token in response<br />
+3. Include token in all subsequent requests</p>
+<p><strong>Token Properties</strong>:<br />
+- <strong>Type</strong>: JWT (JSON Web Token)<br />
+- <strong>Algorithm</strong>: RS256 (RSA with SHA-256)<br />
+- <strong>Expiry</strong>: 8 hours<br />
+- <strong>Refresh</strong>: Available via <code>/auth/refresh</code></p>
+<h3 id="12-security-headers">1.2 Security Headers</h3>
+<p>All responses include the following security headers:</p>
+<pre><code>Strict-Transport-Security: max-age=31536000; includeSubDomains
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+X-XSS-Protection: 1; mode=block
+Content-Security-Policy: default-src 'self'
+Referrer-Policy: strict-origin-when-cross-origin
+</code></pre>
+<h3 id="13-rate-limiting">1.3 Rate Limiting</h3>
+<table>
+<thead>
+<tr>
+<th>Endpoint Type</th>
+<th>Limit</th>
+<th>Window</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Authentication</td>
+<td>5 requests</td>
+<td>5 minutes</td>
+</tr>
+<tr>
+<td>General API</td>
+<td>100 requests</td>
+<td>1 minute</td>
+</tr>
+<tr>
+<td>Health Checks</td>
+<td>60 requests</td>
+<td>1 minute</td>
+</tr>
+<tr>
+<td>Export</td>
+<td>10 requests</td>
+<td>1 minute</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Rate Limit Headers</strong>:</p>
+<pre><code>X-RateLimit-Limit: 100
+X-RateLimit-Remaining: 95
+X-RateLimit-Reset: 1711533600
+</code></pre>
+<h3 id="14-response-format">1.4 Response Format</h3>
+<p>All responses follow this standard format:</p>
+<p><strong>Success Response</strong>:</p>
+<pre><code class="language-json">{
+  &quot;success&quot;: true,
+  &quot;data&quot;: { ... },
+  &quot;meta&quot;: {
+    &quot;timestamp&quot;: &quot;2024-03-27T10:00:00Z&quot;,
+    &quot;request_id&quot;: &quot;req-abc123&quot;
+  }
+}
+</code></pre>
+<p><strong>Error Response</strong>:</p>
+<pre><code class="language-json">{
+  &quot;success&quot;: false,
+  &quot;error&quot;: {
+    &quot;code&quot;: &quot;ERROR_CODE&quot;,
+    &quot;message&quot;: &quot;Human-readable description&quot;,
+    &quot;details&quot;: { ... }
+  },
+  &quot;meta&quot;: {
+    &quot;timestamp&quot;: &quot;2024-03-27T10:00:00Z&quot;,
+    &quot;request_id&quot;: &quot;req-abc123&quot;
+  }
+}
+</code></pre>
+<hr />
+<h2 id="2-authentication-api">2. Authentication API</h2>
+<h3 id="21-login">2.1 Login</h3>
+<p><strong>Endpoint</strong>: <code>POST /auth/login</code></p>
+<p><strong>Description</strong>: Authenticate user and receive JWT token</p>
+<p><strong>Security</strong>: <br />
+- 🔐 HTTPS required<br />
+- 📝 Audit logged<br />
+- ⏳ Rate limited (5/5min)</p>
+<p><strong>Request Body</strong>:</p>
+<pre><code class="language-json">{
+  &quot;email&quot;: &quot;user@company.com&quot;,
+  &quot;password&quot;: &quot;user_password&quot;,
+  &quot;mfa_code&quot;: &quot;123456&quot;  // Optional, required if MFA enabled
+}
+</code></pre>
+<p><strong>Request Schema</strong>:</p>
+<pre><code class="language-json">{
+  &quot;type&quot;: &quot;object&quot;,
+  &quot;required&quot;: [&quot;email&quot;, &quot;password&quot;],
+  &quot;properties&quot;: {
+    &quot;email&quot;: {
+      &quot;type&quot;: &quot;string&quot;,
+      &quot;format&quot;: &quot;email&quot;,
+      &quot;maxLength&quot;: 255
+    },
+    &quot;password&quot;: {
+      &quot;type&quot;: &quot;string&quot;,
+      &quot;minLength&quot;: 12,
+      &quot;maxLength&quot;: 128
+    },
+    &quot;mfa_code&quot;: {
+      &quot;type&quot;: &quot;string&quot;,
+      &quot;pattern&quot;: &quot;^[0-9]{6}$&quot;
+    }
+  }
+}
+</code></pre>
+<p><strong>Response (200 OK)</strong>:</p>
+<pre><code class="language-json">{
+  &quot;success&quot;: true,
+  &quot;data&quot;: {
+    &quot;token&quot;: &quot;eyJhbGciOiJSUzI1NiIs...&quot;,
+    &quot;token_type&quot;: &quot;Bearer&quot;,
+    &quot;expires_in&quot;: 28800,
+    &quot;user&quot;: {
+      &quot;user_id&quot;: &quot;550e8400-e29b-41d4-a716-446655440000&quot;,
+      &quot;email&quot;: &quot;user@company.com&quot;,
+      &quot;name&quot;: &quot;User Name&quot;,
+      &quot;role&quot;: &quot;engineer&quot;,
+      &quot;tenant_id&quot;: &quot;tenant-uuid&quot;,
+      &quot;mfa_enabled&quot;: true
+    }
+  },
+  &quot;meta&quot;: {
+    &quot;timestamp&quot;: &quot;2024-03-27T10:00:00Z&quot;,
+    &quot;request_id&quot;: &quot;req-abc123&quot;
+  }
+}
+</code></pre>
+<p><strong>Response (401 Unauthorized)</strong>:</p>
+<pre><code class="language-json">{
+  &quot;success&quot;: false,
+  &quot;error&quot;: {
+    &quot;code&quot;: &quot;INVALID_CREDENTIALS&quot;,
+    &quot;message&quot;: &quot;Email or password is incorrect&quot;,
+    &quot;details&quot;: {
+      &quot;attempts_remaining&quot;: 3
+    }
+  }
+}
+</code></pre>
+<p><strong>Response (429 Too Many Requests)</strong>:</p>
+<pre><code class="language-json">{
+  &quot;success&quot;: false,
+  &quot;error&quot;: {
+    &quot;code&quot;: &quot;RATE_LIMIT_EXCEEDED&quot;,
+    &quot;message&quot;: &quot;Too many login attempts. Please try again in 5 minutes.&quot;,
+    &quot;details&quot;: {
+      &quot;retry_after&quot;: 300
+    }
+  }
+}
+</code></pre>
+<hr />
+<h3 id="22-logout">2.2 Logout</h3>
+<p><strong>Endpoint</strong>: <code>POST /auth/logout</code></p>
+<p><strong>Description</strong>: Invalidate current session/token</p>
+<p><strong>Security</strong>: <br />
+- ✅ Authentication required<br />
+- 📝 Audit logged</p>
+<p><strong>Request Headers</strong>:</p>
+<pre><code>Authorization: Bearer &lt;token&gt;
+</code></pre>
+<p><strong>Response (200 OK)</strong>:</p>
+<pre><code class="language-json">{
+  &quot;success&quot;: true,
+  &quot;data&quot;: {
+    &quot;message&quot;: &quot;Successfully logged out&quot;
+  }
+}
+</code></pre>
+<hr />
+<h3 id="23-refresh-token">2.3 Refresh Token</h3>
+<p><strong>Endpoint</strong>: <code>POST /auth/refresh</code></p>
+<p><strong>Description</strong>: Refresh JWT token before expiry</p>
+<p><strong>Security</strong>: <br />
+- ✅ Valid token required<br />
+- 📝 Audit logged</p>
+<p><strong>Request Headers</strong>:</p>
+<pre><code>Authorization: Bearer &lt;current_token&gt;
+</code></pre>
+<p><strong>Response (200 OK)</strong>:</p>
+<pre><code class="language-json">{
+  &quot;success&quot;: true,
+  &quot;data&quot;: {
+    &quot;token&quot;: &quot;eyJhbGciOiJSUzI1NiIs...&quot;,
+    &quot;token_type&quot;: &quot;Bearer&quot;,
+    &quot;expires_in&quot;: 28800
+  }
+}
+</code></pre>
+<hr />
+<h3 id="24-verify-token">2.4 Verify Token</h3>
+<p><strong>Endpoint</strong>: <code>GET /auth/verify</code></p>
+<p><strong>Description</strong>: Verify if token is valid and return user info</p>
+<p><strong>Security</strong>: <br />
+- ✅ Valid token required</p>
+<p><strong>Response (200 OK)</strong>:</p>
+<pre><code class="language-json">{
+  &quot;success&quot;: true,
+  &quot;data&quot;: {
+    &quot;valid&quot;: true,
+    &quot;user&quot;: {
+      &quot;user_id&quot;: &quot;550e8400-e29b-41d4-a716-446655440000&quot;,
+      &quot;email&quot;: &quot;user@company.com&quot;,
+      &quot;role&quot;: &quot;engineer&quot;,
+      &quot;permissions&quot;: [
+        &quot;view_sandboxes&quot;,
+        &quot;create_sandbox&quot;,
+        &quot;delete_sandbox&quot;
+      ]
+    },
+    &quot;expires_at&quot;: &quot;2024-03-27T18:00:00Z&quot;
+  }
+}
+</code></pre>
+<hr />
+<h2 id="3-sandbox-management-api">3. Sandbox Management API</h2>
+<h3 id="31-list-sandboxes">3.1 List Sandboxes</h3>
+<p><strong>Endpoint</strong>: <code>GET /sandboxes</code></p>
+<p><strong>Description</strong>: List all sandboxes accessible to user</p>
+<p><strong>Security</strong>: <br />
+- ✅ Authentication required<br />
+- 🛡️ <code>view_sandboxes</code> permission required</p>
+<p><strong>Query Parameters</strong>:<br />
+| Parameter | Type | Description |<br />
+|-----------|------|-------------|<br />
+| <code>instance_id</code> | UUID | Filter by instance |<br />
+| <code>status</code> | string | Filter by status (running, stopped, etc.) |<br />
+| <code>created_by</code> | UUID | Filter by creator |<br />
+| <code>page</code> | integer | Page number (default: 1) |<br />
+| <code>limit</code> | integer | Items per page (default: 20, max: 100) |</p>
+<p><strong>Response (200 OK)</strong>:</p>
+<pre><code class="language-json">{
+  &quot;success&quot;: true,
+  &quot;data&quot;: {
+    &quot;sandboxes&quot;: [
+      {
+        &quot;sandbox_id&quot;: &quot;sandbox-uuid-1&quot;,
+        &quot;name&quot;: &quot;training-job-001&quot;,
+        &quot;instance_id&quot;: &quot;instance-uuid&quot;,
+        &quot;status&quot;: &quot;running&quot;,
+        &quot;image&quot;: &quot;nemoclaw/pytorch:2.1.0&quot;,
+        &quot;gpu_enabled&quot;: true,
+        &quot;created_by&quot;: &quot;user-uuid&quot;,
+        &quot;created_at&quot;: &quot;2024-03-27T08:00:00Z&quot;,
+        &quot;started_at&quot;: &quot;2024-03-27T08:05:00Z&quot;
+      }
+    ],
+    &quot;pagination&quot;: {
+      &quot;page&quot;: 1,
+      &quot;limit&quot;: 20,
+      &quot;total&quot;: 45,
+      &quot;pages&quot;: 3
+    }
+  }
+}
+</code></pre>
+<hr />
+<h3 id="32-create-sandbox">3.2 Create Sandbox</h3>
+<p><strong>Endpoint</strong>: <code>POST /sandboxes</code></p>
+<p><strong>Description</strong>: Create a new sandbox</p>
+<p><strong>Security</strong>: <br />
+- ✅ Authentication required<br />
+- 🛡️ <code>create_sandbox</code> permission required<br />
+- 📝 Audit logged</p>
+<p><strong>Request Body</strong>:</p>
+<pre><code class="language-json">{
+  &quot;instance_id&quot;: &quot;instance-uuid&quot;,
+  &quot;name&quot;: &quot;training-job-001&quot;,
+  &quot;image&quot;: &quot;nemoclaw/pytorch:2.1.0-cuda12.1&quot;,
+  &quot;gpu_enabled&quot;: true,
+  &quot;gpu_memory_gb&quot;: 24,
+  &quot;cpu_cores&quot;: 8,
+  &quot;memory_gb&quot;: 32,
+  &quot;storage_gb&quot;: 100,
+  &quot;environment_vars&quot;: {
+    &quot;CUDA_VISIBLE_DEVICES&quot;: &quot;0,1&quot;,
+    &quot;PYTHONPATH&quot;: &quot;/workspace&quot;
+  },
+  &quot;ports&quot;: [8888, 6006],
+  &quot;volumes&quot;: [
+    {
+      &quot;host_path&quot;: &quot;/data/datasets&quot;,
+      &quot;container_path&quot;: &quot;/data&quot;,
+      &quot;read_only&quot;: true
+    }
+  ]
+}
+</code></pre>
+<p><strong>Request Schema</strong>:</p>
+<pre><code class="language-json">{
+  &quot;type&quot;: &quot;object&quot;,
+  &quot;required&quot;: [&quot;instance_id&quot;, &quot;name&quot;, &quot;image&quot;],
+  &quot;properties&quot;: {
+    &quot;instance_id&quot;: {
+      &quot;type&quot;: &quot;string&quot;,
+      &quot;format&quot;: &quot;uuid&quot;
+    },
+    &quot;name&quot;: {
+      &quot;type&quot;: &quot;string&quot;,
+      &quot;pattern&quot;: &quot;^[a-zA-Z0-9_-]{3,64}$&quot;
+    },
+    &quot;image&quot;: {
+      &quot;type&quot;: &quot;string&quot;,
+      &quot;maxLength&quot;: 255
+    },
+    &quot;gpu_enabled&quot;: {
+      &quot;type&quot;: &quot;boolean&quot;,
+      &quot;default&quot;: false
+    },
+    &quot;gpu_memory_gb&quot;: {
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;minimum&quot;: 1,
+      &quot;maximum&quot;: 80
+    },
+    &quot;cpu_cores&quot;: {
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;minimum&quot;: 1,
+      &quot;maximum&quot;: 128
+    },
+    &quot;memory_gb&quot;: {
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;minimum&quot;: 1,
+      &quot;maximum&quot;: 512
+    },
+    &quot;storage_gb&quot;: {
+      &quot;type&quot;: &quot;integer&quot;,
+      &quot;minimum&quot;: 10,
+      &quot;maximum&quot;: 10000
+    }
+  }
+}
+</code></pre>
+<p><strong>Response (201 Created)</strong>:</p>
+<pre><code class="language-json">{
+  &quot;success&quot;: true,
+  &quot;data&quot;: {
+    &quot;sandbox_id&quot;: &quot;sandbox-uuid&quot;,
+    &quot;name&quot;: &quot;training-job-001&quot;,
+    &quot;status&quot;: &quot;creating&quot;,
+    &quot;created_at&quot;: &quot;2024-03-27T10:00:00Z&quot;,
+    &quot;message&quot;: &quot;Sandbox creation initiated&quot;
+  }
+}
+</code></pre>
+<p><strong>Response (403 Forbidden)</strong>:</p>
+<pre><code class="language-json">{
+  &quot;success&quot;: false,
+  &quot;error&quot;: {
+    &quot;code&quot;: &quot;QUOTA_EXCEEDED&quot;,
+    &quot;message&quot;: &quot;Sandbox limit reached for your tier&quot;,
+    &quot;details&quot;: {
+      &quot;current&quot;: 10,
+      &quot;limit&quot;: 10,
+      &quot;tier&quot;: &quot;professional&quot;
+    }
+  }
+}
+</code></pre>
+<hr />
+<h3 id="33-get-sandbox-details">3.3 Get Sandbox Details</h3>
+<p><strong>Endpoint</strong>: <code>GET /sandboxes/{sandbox_id}</code></p>
+<p><strong>Description</strong>: Get detailed information about a specific sandbox</p>
+<p><strong>Security</strong>: <br />
+- ✅ Authentication required<br />
+- 🛡️ <code>view_sandboxes</code> permission + resource access</p>
+<p><strong>Path Parameters</strong>:<br />
+| Parameter | Type | Description |<br />
+|-----------|------|-------------|<br />
+| <code>sandbox_id</code> | UUID | Sandbox identifier |</p>
+<p><strong>Response (200 OK)</strong>:</p>
+<pre><code class="language-json">{
+  &quot;success&quot;: true,
+  &quot;data&quot;: {
+    &quot;sandbox_id&quot;: &quot;sandbox-uuid&quot;,
+    &quot;name&quot;: &quot;training-job-001&quot;,
+    &quot;instance_id&quot;: &quot;instance-uuid&quot;,
+    &quot;status&quot;: &quot;running&quot;,
+    &quot;image&quot;: &quot;nemoclaw/pytorch:2.1.0&quot;,
+    &quot;gpu_enabled&quot;: true,
+    &quot;resources&quot;: {
+      &quot;cpu_cores&quot;: 8,
+      &quot;memory_gb&quot;: 32,
+      &quot;storage_gb&quot;: 100,
+      &quot;gpu_memory_gb&quot;: 24
+    },
+    &quot;environment_vars&quot;: {...},
+    &quot;ports&quot;: [8888, 6006],
+    &quot;volumes&quot;: [...],
+    &quot;created_by&quot;: &quot;user-uuid&quot;,
+    &quot;created_at&quot;: &quot;2024-03-27T08:00:00Z&quot;,
+    &quot;started_at&quot;: &quot;2024-03-27T08:05:00Z&quot;,
+    &quot;health&quot;: {
+      &quot;status&quot;: &quot;healthy&quot;,
+      &quot;last_check&quot;: &quot;2024-03-27T10:00:00Z&quot;
+    }
+  }
+}
+</code></pre>
+<hr />
+<h3 id="34-start-sandbox">3.4 Start Sandbox</h3>
+<p><strong>Endpoint</strong>: <code>POST /sandboxes/{sandbox_id}/start</code></p>
+<p><strong>Description</strong>: Start a stopped sandbox</p>
+<p><strong>Security</strong>: <br />
+- ✅ Authentication required<br />
+- 🛡️ <code>start_stop_sandbox</code> permission required<br />
+- 📝 Audit logged</p>
+<p><strong>Response (200 OK)</strong>:</p>
+<pre><code class="language-json">{
+  &quot;success&quot;: true,
+  &quot;data&quot;: {
+    &quot;sandbox_id&quot;: &quot;sandbox-uuid&quot;,
+    &quot;status&quot;: &quot;running&quot;,
+    &quot;started_at&quot;: &quot;2024-03-27T10:00:00Z&quot;
+  }
+}
+</code></pre>
+<hr />
+<h3 id="35-stop-sandbox">3.5 Stop Sandbox</h3>
+<p><strong>Endpoint</strong>: <code>POST /sandboxes/{sandbox_id}/stop</code></p>
+<p><strong>Description</strong>: Stop a running sandbox</p>
+<p><strong>Security</strong>: <br />
+- ✅ Authentication required<br />
+- 🛡️ <code>start_stop_sandbox</code> permission required<br />
+- 📝 Audit logged</p>
+<p><strong>Request Body</strong> (optional):</p>
+<pre><code class="language-json">{
+  &quot;force&quot;: false,  // Force stop if true
+  &quot;timeout&quot;: 30    // Grace period in seconds
+}
+</code></pre>
+<p><strong>Response (200 OK)</strong>:</p>
+<pre><code class="language-json">{
+  &quot;success&quot;: true,
+  &quot;data&quot;: {
+    &quot;sandbox_id&quot;: &quot;sandbox-uuid&quot;,
+    &quot;status&quot;: &quot;stopped&quot;,
+    &quot;stopped_at&quot;: &quot;2024-03-27T10:00:00Z&quot;
+  }
+}
+</code></pre>
+<hr />
+<h3 id="36-delete-sandbox">3.6 Delete Sandbox</h3>
+<p><strong>Endpoint</strong>: <code>DELETE /sandboxes/{sandbox_id}</code></p>
+<p><strong>Description</strong>: Delete a sandbox (must be stopped)</p>
+<p><strong>Security</strong>: <br />
+- ✅ Authentication required<br />
+- 🛡️ <code>delete_sandbox</code> permission required<br />
+- 📝 Audit logged</p>
+<p><strong>Query Parameters</strong>:<br />
+| Parameter | Type | Default | Description |<br />
+|-----------|------|---------|-------------|<br />
+| <code>force</code> | boolean | false | Force delete even if running |</p>
+<p><strong>Response (200 OK)</strong>:</p>
+<pre><code class="language-json">{
+  &quot;success&quot;: true,
+  &quot;data&quot;: {
+    &quot;sandbox_id&quot;: &quot;sandbox-uuid&quot;,
+    &quot;deleted&quot;: true,
+    &quot;message&quot;: &quot;Sandbox successfully deleted&quot;
+  }
+}
+</code></pre>
+<hr />
+<h3 id="37-get-sandbox-logs">3.7 Get Sandbox Logs</h3>
+<p><strong>Endpoint</strong>: <code>GET /sandboxes/{sandbox_id}/logs</code></p>
+<p><strong>Description</strong>: Retrieve sandbox logs</p>
+<p><strong>Security</strong>: <br />
+- ✅ Authentication required<br />
+- 🛡️ <code>view_logs</code> permission required</p>
+<p><strong>Query Parameters</strong>:<br />
+| Parameter | Type | Default | Description |<br />
+|-----------|------|---------|-------------|<br />
+| <code>lines</code> | integer | 100 | Number of lines to retrieve |<br />
+| <code>since</code> | ISO8601 | - | Start time filter |<br />
+| <code>until</code> | ISO8601 | - | End time filter |<br />
+| <code>follow</code> | boolean | false | Stream logs (WebSocket) |</p>
+<p><strong>Response (200 OK)</strong>:</p>
+<pre><code class="language-json">{
+  &quot;success&quot;: true,
+  &quot;data&quot;: {
+    &quot;sandbox_id&quot;: &quot;sandbox-uuid&quot;,
+    &quot;logs&quot;: [
+      {
+        &quot;timestamp&quot;: &quot;2024-03-27T10:00:00Z&quot;,
+        &quot;level&quot;: &quot;INFO&quot;,
+        &quot;message&quot;: &quot;Training started&quot;
+      },
+      {
+        &quot;timestamp&quot;: &quot;2024-03-27T10:01:00Z&quot;,
+        &quot;level&quot;: &quot;INFO&quot;,
+        &quot;message&quot;: &quot;Epoch 1/100&quot;
+      }
+    ],
+    &quot;total_lines&quot;: 100
+  }
+}
+</code></pre>
+<hr />
+<h2 id="4-security-operations-api">4. Security Operations API</h2>
+<h3 id="41-list-network-requests">4.1 List Network Requests</h3>
+<p><strong>Endpoint</strong>: <code>GET /security/requests</code></p>
+<p><strong>Description</strong>: List network requests pending approval</p>
+<p><strong>Security</strong>: <br />
+- ✅ Authentication required<br />
+- 🛡️ <code>view_request_queue</code> permission required</p>
+<p><strong>Query Parameters</strong>:<br />
+| Parameter | Type | Description |<br />
+|-----------|------|-------------|<br />
+| <code>status</code> | string | Filter by status (pending, approved, denied) |<br />
+| <code>risk_level</code> | string | Filter by risk (low, medium, high) |<br />
+| <code>sandbox_id</code> | UUID | Filter by sandbox |</p>
+<p><strong>Response (200 OK)</strong>:</p>
+<pre><code class="language-json">{
+  &quot;success&quot;: true,
+  &quot;data&quot;: {
+    &quot;requests&quot;: [
+      {
+        &quot;request_id&quot;: &quot;req-uuid&quot;,
+        &quot;timestamp&quot;: &quot;2024-03-27T10:00:00Z&quot;,
+        &quot;sandbox_id&quot;: &quot;sandbox-uuid&quot;,
+        &quot;request_type&quot;: &quot;outbound&quot;,
+        &quot;target_host&quot;: &quot;api.external.com&quot;,
+        &quot;target_port&quot;: 443,
+        &quot;protocol&quot;: &quot;https&quot;,
+        &quot;risk_score&quot;: 75,
+        &quot;risk_factors&quot;: [&quot;external_domain&quot;, &quot;unapproved_api&quot;],
+        &quot;status&quot;: &quot;pending&quot;
+      }
+    ]
+  }
+}
+</code></pre>
+<hr />
+<h3 id="42-approve-request">4.2 Approve Request</h3>
+<p><strong>Endpoint</strong>: <code>POST /security/requests/{request_id}/approve</code></p>
+<p><strong>Description</strong>: Approve a network request</p>
+<p><strong>Security</strong>: <br />
+- ✅ Authentication required<br />
+- 🛡️ <code>approve_requests</code> permission required<br />
+- 📝 Audit logged</p>
+<p><strong>Response (200 OK)</strong>:</p>
+<pre><code class="language-json">{
+  &quot;success&quot;: true,
+  &quot;data&quot;: {
+    &quot;request_id&quot;: &quot;req-uuid&quot;,
+    &quot;status&quot;: &quot;approved&quot;,
+    &quot;approved_by&quot;: &quot;user-uuid&quot;,
+    &quot;approved_at&quot;: &quot;2024-03-27T10:05:00Z&quot;
+  }
+}
+</code></pre>
+<hr />
+<h3 id="43-list-security-alerts">4.3 List Security Alerts</h3>
+<p><strong>Endpoint</strong>: <code>GET /security/alerts</code></p>
+<p><strong>Description</strong>: List security alerts</p>
+<p><strong>Security</strong>: <br />
+- ✅ Authentication required<br />
+- 🛡️ <code>view_security_alerts</code> permission required</p>
+<p><strong>Query Parameters</strong>:<br />
+| Parameter | Type | Description |<br />
+|-----------|------|-------------|<br />
+| <code>severity</code> | string | Filter by severity |<br />
+| <code>acknowledged</code> | boolean | Filter by acknowledgment status |<br />
+| <code>alert_type</code> | string | Filter by type |</p>
+<p><strong>Response (200 OK)</strong>:</p>
+<pre><code class="language-json">{
+  &quot;success&quot;: true,
+  &quot;data&quot;: {
+    &quot;alerts&quot;: [
+      {
+        &quot;alert_id&quot;: &quot;alert-uuid&quot;,
+        &quot;timestamp&quot;: &quot;2024-03-27T10:00:00Z&quot;,
+        &quot;severity&quot;: &quot;high&quot;,
+        &quot;alert_type&quot;: &quot;policy_violation&quot;,
+        &quot;title&quot;: &quot;Unauthorized data access&quot;,
+        &quot;description&quot;: &quot;Sandbox attempted to access restricted dataset&quot;,
+        &quot;source_ip&quot;: &quot;10.0.0.50&quot;,
+        &quot;acknowledged&quot;: false
+      }
+    ]
+  }
+}
+</code></pre>
+<hr />
+<h3 id="44-acknowledge-alert">4.4 Acknowledge Alert</h3>
+<p><strong>Endpoint</strong>: <code>POST /security/alerts/{alert_id}/acknowledge</code></p>
+<p><strong>Description</strong>: Acknowledge a security alert</p>
+<p><strong>Security</strong>: <br />
+- ✅ Authentication required<br />
+- 🛡️ <code>acknowledge_alerts</code> permission required<br />
+- 📝 Audit logged</p>
+<p><strong>Request Body</strong>:</p>
+<pre><code class="language-json">{
+  &quot;notes&quot;: &quot;Investigating the issue&quot;
+}
+</code></pre>
+<p><strong>Response (200 OK)</strong>:</p>
+<pre><code class="language-json">{
+  &quot;success&quot;: true,
+  &quot;data&quot;: {
+    &quot;alert_id&quot;: &quot;alert-uuid&quot;,
+    &quot;acknowledged&quot;: true,
+    &quot;acknowledged_by&quot;: &quot;user-uuid&quot;,
+    &quot;acknowledged_at&quot;: &quot;2024-03-27T10:05:00Z&quot;
+  }
+}
+</code></pre>
+<hr />
+<h2 id="5-health-monitoring-api">5. Health Monitoring API</h2>
+<h3 id="51-run-health-assessment">5.1 Run Health Assessment</h3>
+<p><strong>Endpoint</strong>: <code>POST /health/assess</code></p>
+<p><strong>Description</strong>: Execute comprehensive health assessment</p>
+<p><strong>Security</strong>: <br />
+- ✅ Authentication required<br />
+- 🛡️ Any authenticated user<br />
+- ⏳ Rate limited (60/min)</p>
+<p><strong>Request Body</strong> (optional):</p>
+<pre><code class="language-json">{
+  &quot;check_types&quot;: [&quot;service_availability&quot;, &quot;security_posture&quot;],
+  &quot;quick&quot;: false
+}
+</code></pre>
+<p><strong>Response (200 OK)</strong>:</p>
+<pre><code class="language-json">{
+  &quot;success&quot;: true,
+  &quot;data&quot;: {
+    &quot;report_id&quot;: &quot;health-20240327100000-abc123&quot;,
+    &quot;generated_at&quot;: &quot;2024-03-27T10:00:00Z&quot;,
+    &quot;overall_status&quot;: &quot;healthy&quot;,
+    &quot;checks&quot;: [
+      {
+        &quot;check_id&quot;: &quot;service_availability&quot;,
+        &quot;status&quot;: &quot;healthy&quot;,
+        &quot;severity&quot;: &quot;info&quot;,
+        &quot;duration_ms&quot;: 45.2,
+        &quot;message&quot;: &quot;All core services available&quot;
+      }
+    ],
+    &quot;integrity_hash&quot;: &quot;sha256:abc123...&quot;,
+    &quot;signature&quot;: &quot;hmac:def456...&quot;
+  }
+}
+</code></pre>
+<hr />
+<h3 id="52-get-health-status">5.2 Get Health Status</h3>
+<p><strong>Endpoint</strong>: <code>GET /health/status</code></p>
+<p><strong>Description</strong>: Get current health status (cached)</p>
+<p><strong>Security</strong>: <br />
+- ✅ Authentication required<br />
+- 🛡️ Any authenticated user</p>
+<p><strong>Response (200 OK)</strong>:</p>
+<pre><code class="language-json">{
+  &quot;success&quot;: true,
+  &quot;data&quot;: {
+    &quot;status&quot;: &quot;healthy&quot;,
+    &quot;last_check&quot;: &quot;2024-03-27T10:00:00Z&quot;,
+    &quot;components&quot;: {
+      &quot;database&quot;: &quot;healthy&quot;,
+      &quot;cache&quot;: &quot;healthy&quot;,
+      &quot;external_api&quot;: &quot;healthy&quot;
+    }
+  }
+}
+</code></pre>
+<hr />
+<h3 id="53-list-anomalies">5.3 List Anomalies</h3>
+<p><strong>Endpoint</strong>: <code>GET /health/anomalies</code></p>
+<p><strong>Description</strong>: List detected anomalies</p>
+<p><strong>Security</strong>: <br />
+- ✅ Authentication required<br />
+- 🛡️ Any authenticated user</p>
+<p><strong>Query Parameters</strong>:<br />
+| Parameter | Type | Description |<br />
+|-----------|------|-------------|<br />
+| <code>severity</code> | string | Filter by severity |<br />
+| <code>acknowledged</code> | boolean | Filter by status |</p>
+<p><strong>Response (200 OK)</strong>:</p>
+<pre><code class="language-json">{
+  &quot;success&quot;: true,
+  &quot;data&quot;: {
+    &quot;anomalies&quot;: [
+      {
+        &quot;event_id&quot;: &quot;anomaly-uuid&quot;,
+        &quot;timestamp&quot;: &quot;2024-03-27T09:55:00Z&quot;,
+        &quot;anomaly_type&quot;: &quot;sudden_degradation&quot;,
+        &quot;severity&quot;: &quot;high&quot;,
+        &quot;description&quot;: &quot;GPU temperature suddenly increased&quot;,
+        &quot;affected_component&quot;: &quot;gpu_metrics&quot;,
+        &quot;acknowledged&quot;: false
+      }
+    ]
+  }
+}
+</code></pre>
+<hr />
+<h2 id="6-audit-compliance-api">6. Audit &amp; Compliance API</h2>
+<h3 id="61-query-audit-logs">6.1 Query Audit Logs</h3>
+<p><strong>Endpoint</strong>: <code>GET /audit/logs</code></p>
+<p><strong>Description</strong>: Query audit logs with filters</p>
+<p><strong>Security</strong>: <br />
+- ✅ Authentication required<br />
+- 🛡️ <code>view_audit_trail</code> permission required</p>
+<p><strong>Query Parameters</strong>:<br />
+| Parameter | Type | Description |<br />
+|-----------|------|-------------|<br />
+| <code>start_date</code> | ISO8601 | Start of date range |<br />
+| <code>end_date</code> | ISO8601 | End of date range |<br />
+| <code>event_type</code> | string | Filter by event type |<br />
+| <code>user_id</code> | UUID | Filter by user |<br />
+| <code>severity</code> | string | Filter by severity |</p>
+<p><strong>Response (200 OK)</strong>:</p>
+<pre><code class="language-json">{
+  &quot;success&quot;: true,
+  &quot;data&quot;: {
+    &quot;logs&quot;: [
+      {
+        &quot;log_id&quot;: &quot;log-uuid&quot;,
+        &quot;timestamp&quot;: &quot;2024-03-27T10:00:00Z&quot;,
+        &quot;event_type&quot;: &quot;sandbox_create&quot;,
+        &quot;user_id&quot;: &quot;user-uuid&quot;,
+        &quot;severity&quot;: &quot;info&quot;,
+        &quot;action&quot;: &quot;create&quot;,
+        &quot;resource_type&quot;: &quot;sandbox&quot;,
+        &quot;resource_id&quot;: &quot;sandbox-uuid&quot;,
+        &quot;description&quot;: &quot;Created sandbox 'training-job-001'&quot;
+      }
+    ],
+    &quot;total&quot;: 150
+  }
+}
+</code></pre>
+<hr />
+<h3 id="62-export-audit-logs">6.2 Export Audit Logs</h3>
+<p><strong>Endpoint</strong>: <code>POST /audit/export</code></p>
+<p><strong>Description</strong>: Export audit logs in various formats</p>
+<p><strong>Security</strong>: <br />
+- ✅ Authentication required<br />
+- 🛡️ <code>view_audit_trail</code> permission required<br />
+- ⏳ Rate limited (10/min)</p>
+<p><strong>Request Body</strong>:</p>
+<pre><code class="language-json">{
+  &quot;format&quot;: &quot;json&quot;,
+  &quot;start_date&quot;: &quot;2024-03-01T00:00:00Z&quot;,
+  &quot;end_date&quot;: &quot;2024-03-27T23:59:59Z&quot;,
+  &quot;filters&quot;: {
+    &quot;event_type&quot;: [&quot;sandbox_create&quot;, &quot;sandbox_delete&quot;],
+    &quot;severity&quot;: [&quot;high&quot;, &quot;critical&quot;]
+  }
+}
+</code></pre>
+<p><strong>Supported Formats</strong>: <code>json</code>, <code>csv</code>, <code>pdf</code>, <code>syslog</code>, <code>cef</code>, <code>leef</code></p>
+<p><strong>Response (200 OK)</strong>:</p>
+<pre><code class="language-json">{
+  &quot;success&quot;: true,
+  &quot;data&quot;: {
+    &quot;export_id&quot;: &quot;export-uuid&quot;,
+    &quot;status&quot;: &quot;processing&quot;,
+    &quot;download_url&quot;: &quot;https://api.nemoclaw.internal/v2/audit/exports/export-uuid/download&quot;,
+    &quot;expires_at&quot;: &quot;2024-03-28T10:00:00Z&quot;
+  }
+}
+</code></pre>
+<hr />
+<h2 id="7-error-codes">7. Error Codes</h2>
+<h3 id="standard-http-status-codes">Standard HTTP Status Codes</h3>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Meaning</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>200</strong></td>
+<td>OK</td>
+<td>Request successful</td>
+</tr>
+<tr>
+<td><strong>201</strong></td>
+<td>Created</td>
+<td>Resource created successfully</td>
+</tr>
+<tr>
+<td><strong>204</strong></td>
+<td>No Content</td>
+<td>Request successful, no body</td>
+</tr>
+<tr>
+<td><strong>400</strong></td>
+<td>Bad Request</td>
+<td>Invalid request parameters</td>
+</tr>
+<tr>
+<td><strong>401</strong></td>
+<td>Unauthorized</td>
+<td>Authentication required or failed</td>
+</tr>
+<tr>
+<td><strong>403</strong></td>
+<td>Forbidden</td>
+<td>Insufficient permissions</td>
+</tr>
+<tr>
+<td><strong>404</strong></td>
+<td>Not Found</td>
+<td>Resource not found</td>
+</tr>
+<tr>
+<td><strong>409</strong></td>
+<td>Conflict</td>
+<td>Resource conflict (e.g., duplicate)</td>
+</tr>
+<tr>
+<td><strong>422</strong></td>
+<td>Unprocessable Entity</td>
+<td>Validation error</td>
+</tr>
+<tr>
+<td><strong>429</strong></td>
+<td>Too Many Requests</td>
+<td>Rate limit exceeded</td>
+</tr>
+<tr>
+<td><strong>500</strong></td>
+<td>Internal Server Error</td>
+<td>Server error</td>
+</tr>
+<tr>
+<td><strong>503</strong></td>
+<td>Service Unavailable</td>
+<td>Service temporarily unavailable</td>
+</tr>
+</tbody>
+</table>
+<h3 id="application-error-codes">Application Error Codes</h3>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Description</th>
+<th>HTTP Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>INVALID_CREDENTIALS</code></td>
+<td>Email or password incorrect</td>
+<td>401</td>
+</tr>
+<tr>
+<td><code>TOKEN_EXPIRED</code></td>
+<td>JWT token has expired</td>
+<td>401</td>
+</tr>
+<tr>
+<td><code>INVALID_TOKEN</code></td>
+<td>JWT token is invalid</td>
+<td>401</td>
+</tr>
+<tr>
+<td><code>INSUFFICIENT_PERMISSIONS</code></td>
+<td>User lacks required permission</td>
+<td>403</td>
+</tr>
+<tr>
+<td><code>RESOURCE_NOT_FOUND</code></td>
+<td>Requested resource not found</td>
+<td>404</td>
+</tr>
+<tr>
+<td><code>VALIDATION_ERROR</code></td>
+<td>Request validation failed</td>
+<td>422</td>
+</tr>
+<tr>
+<td><code>QUOTA_EXCEEDED</code></td>
+<td>Resource limit reached</td>
+<td>403</td>
+</tr>
+<tr>
+<td><code>RATE_LIMIT_EXCEEDED</code></td>
+<td>Too many requests</td>
+<td>429</td>
+</tr>
+<tr>
+<td><code>RESOURCE_IN_USE</code></td>
+<td>Resource cannot be modified</td>
+<td>409</td>
+</tr>
+<tr>
+<td><code>SANDBOX_NOT_STOPPED</code></td>
+<td>Sandbox must be stopped first</td>
+<td>409</td>
+</tr>
+<tr>
+<td><code>INSTANCE_OFFLINE</code></td>
+<td>Instance is not accessible</td>
+<td>503</td>
+</tr>
+<tr>
+<td><code>INTERNAL_ERROR</code></td>
+<td>Unexpected server error</td>
+<td>500</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="8-sdk-examples">8. SDK Examples</h2>
+<h3 id="python-sdk">Python SDK</h3>
+<pre><code class="language-python">import requests
+
+class NemoClawClient:
+    def __init__(self, base_url, token=None):
+        self.base_url = base_url
+        self.token = token
+        self.session = requests.Session()
+
+    def authenticate(self, email, password, mfa_code=None):
+        &quot;&quot;&quot;Authenticate and store token&quot;&quot;&quot;
+        payload = {
+            &quot;email&quot;: email,
+            &quot;password&quot;: password
+        }
+        if mfa_code:
+            payload[&quot;mfa_code&quot;] = mfa_code
+
+        response = self.session.post(
+            f&quot;{self.base_url}/auth/login&quot;,
+            json=payload
+        )
+        response.raise_for_status()
+
+        data = response.json()[&quot;data&quot;]
+        self.token = data[&quot;token&quot;]
+        return data[&quot;user&quot;]
+
+    def _headers(self):
+        &quot;&quot;&quot;Get authenticated headers&quot;&quot;&quot;
+        return {
+            &quot;Authorization&quot;: f&quot;Bearer {self.token}&quot;,
+            &quot;Content-Type&quot;: &quot;application/json&quot;
+        }
+
+    def list_sandboxes(self, instance_id=None, status=None):
+        &quot;&quot;&quot;List sandboxes with optional filters&quot;&quot;&quot;
+        params = {}
+        if instance_id:
+            params[&quot;instance_id&quot;] = instance_id
+        if status:
+            params[&quot;status&quot;] = status
+
+        response = self.session.get(
+            f&quot;{self.base_url}/sandboxes&quot;,
+            headers=self._headers(),
+            params=params
+        )
+        response.raise_for_status()
+        return response.json()[&quot;data&quot;][&quot;sandboxes&quot;]
+
+    def create_sandbox(self, config):
+        &quot;&quot;&quot;Create a new sandbox&quot;&quot;&quot;
+        response = self.session.post(
+            f&quot;{self.base_url}/sandboxes&quot;,
+            headers=self._headers(),
+            json=config
+        )
+        response.raise_for_status()
+        return response.json()[&quot;data&quot;]
+
+    def start_sandbox(self, sandbox_id):
+        &quot;&quot;&quot;Start a sandbox&quot;&quot;&quot;
+        response = self.session.post(
+            f&quot;{self.base_url}/sandboxes/{sandbox_id}/start&quot;,
+            headers=self._headers()
+        )
+        response.raise_for_status()
+        return response.json()[&quot;data&quot;]
+
+    def stop_sandbox(self, sandbox_id, force=False):
+        &quot;&quot;&quot;Stop a sandbox&quot;&quot;&quot;
+        response = self.session.post(
+            f&quot;{self.base_url}/sandboxes/{sandbox_id}/stop&quot;,
+            headers=self._headers(),
+            json={&quot;force&quot;: force}
+        )
+        response.raise_for_status()
+        return response.json()[&quot;data&quot;]
+
+# Usage example
+client = NemoClawClient(&quot;https://api.nemoclaw.internal/v2&quot;)
+
+# Authenticate
+user = client.authenticate(&quot;engineer@company.com&quot;, &quot;password123&quot;)
+print(f&quot;Logged in as {user['name']}&quot;)
+
+# List sandboxes
+sandboxes = client.list_sandboxes()
+for sandbox in sandboxes:
+    print(f&quot;{sandbox['name']}: {sandbox['status']}&quot;)
+
+# Create new sandbox
+new_sandbox = client.create_sandbox({
+    &quot;instance_id&quot;: &quot;instance-uuid&quot;,
+    &quot;name&quot;: &quot;training-job-002&quot;,
+    &quot;image&quot;: &quot;nemoclaw/pytorch:2.1.0&quot;,
+    &quot;gpu_enabled&quot;: True,
+    &quot;cpu_cores&quot;: 8,
+    &quot;memory_gb&quot;: 32
+})
+print(f&quot;Created sandbox: {new_sandbox['sandbox_id']}&quot;)
+</code></pre>
+<h3 id="curl-examples">cURL Examples</h3>
+<pre><code class="language-bash"># Authenticate
+curl -X POST https://api.nemoclaw.internal/v2/auth/login \
+  -H &quot;Content-Type: application/json&quot; \
+  -d '{
+    &quot;email&quot;: &quot;engineer@company.com&quot;,
+    &quot;password&quot;: &quot;password123&quot;
+  }'
+
+# List sandboxes
+curl -X GET https://api.nemoclaw.internal/v2/sandboxes \
+  -H &quot;Authorization: Bearer &lt;token&gt;&quot;
+
+# Create sandbox
+curl -X POST https://api.nemoclaw.internal/v2/sandboxes \
+  -H &quot;Authorization: Bearer &lt;token&gt;&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -d '{
+    &quot;instance_id&quot;: &quot;instance-uuid&quot;,
+    &quot;name&quot;: &quot;training-job&quot;,
+    &quot;image&quot;: &quot;nemoclaw/pytorch:2.1.0&quot;,
+    &quot;gpu_enabled&quot;: true
+  }'
+
+# Start sandbox
+curl -X POST https://api.nemoclaw.internal/v2/sandboxes/sandbox-uuid/start \
+  -H &quot;Authorization: Bearer &lt;token&gt;&quot;
+
+# Stop sandbox
+curl -X POST https://api.nemoclaw.internal/v2/sandboxes/sandbox-uuid/stop \
+  -H &quot;Authorization: Bearer &lt;token&gt;&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -d '{&quot;force&quot;: false}'
+</code></pre>
+<hr />
+<p><strong>Version</strong>: 2.1.0<br />
+<strong>Last Updated</strong>: March 27, 2026<br />
+<strong>Next Review</strong>: April 27, 2026</p>
+<hr />
+<p><em>End of API Specifications</em></p>
+    </div>
+    
+    <div class="footer">
+        <p>NemoClaw Enterprise Command Center v2.1.0</p>
+        <p>© 2026 | Author: <a href="https://www.linkedin.com/in/bhaskerkpatel/" target="_blank">Bhaskar Puppala</a></p>
+    </div>
+</body>
+</html>

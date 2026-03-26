@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Component Documentation</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+            color: #333;
+        }
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px 40px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .header h1 { margin: 0; font-size: 2em; }
+        .content {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 { color: #1e3c72; border-bottom: 3px solid #2a5298; padding-bottom: 10px; }
+        h2 { color: #2a5298; margin-top: 30px; border-bottom: 2px solid #eee; padding-bottom: 8px; }
+        h3 { color: #444; }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+            background: white;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background: #1e3c72;
+            color: white;
+            font-weight: 600;
+        }
+        tr:nth-child(even) { background: #f8f9fa; }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+        }
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 6px;
+            overflow-x: auto;
+            line-height: 1.4;
+        }
+        pre code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+        }
+        a { color: #2a5298; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        ul, ol { padding-left: 30px; }
+        li { margin: 8px 0; }
+        blockquote {
+            border-left: 4px solid #2a5298;
+            margin: 20px 0;
+            padding: 15px 20px;
+            background: #f8f9fa;
+            font-style: italic;
+        }
+        .nav {
+            background: #1e3c72;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        .nav a {
+            color: white;
+            margin-right: 20px;
+            font-weight: 500;
+        }
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            border-top: 1px solid #ddd;
+            margin-top: 40px;
+        }
+        @media print {
+            body { background: white; }
+            .header { background: #1e3c72 !important; -webkit-print-color-adjust: exact; }
+            .content { box-shadow: none; }
+        }
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .content { padding: 20px; }
+            .header { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="index.html">← Documentation Index</a>
+        <a href="../README.html">README</a>
+    </div>
+    
+    <div class="header">
+        <h1>📄 Component Documentation</h1>
+    </div>
+    
+    <div class="content">
+        <h1 id="nemoclaw-enterprise-command-center-component-documentation">NemoClaw Enterprise Command Center - Component Documentation</h1>
+<p><strong>Version</strong>: 2.1.0<br />
+<strong>Classification</strong>: Internal Use<br />
+<strong>Last Updated</strong>: March 27, 2026</p>
+<hr />
+<h2 id="1-enterprise-component-overview">1. Enterprise Component Overview</h2>
+<p>The NemoClaw Enterprise Gateway follows a <strong>layered architecture</strong> with clear separation of concerns:</p>
+<pre><code>┌─────────────────────────────────────────┐
+│         Presentation Layer              │
+│  (Streamlit Pages, Dashboards)           │
+├─────────────────────────────────────────┤
+│         Application Layer               │
+│  (Components: Forms, Charts, UI)       │
+├─────────────────────────────────────────┤
+│         Service Layer                   │
+│  (Business Logic, Core Services)         │
+├─────────────────────────────────────────┤
+│         Infrastructure Layer            │
+│  (External APIs, Databases)              │
+└─────────────────────────────────────────┘
+</code></pre>
+<hr />
+<h2 id="2-presentation-layer-components">2. Presentation Layer Components</h2>
+<h3 id="21-page-components">2.1 Page Components</h3>
+<h4 id="pages00_loginpy-authentication-portal"><code>pages/00_Login.py</code> - Authentication Portal</h4>
+<p><strong>Purpose</strong>: User authentication and session establishment</p>
+<p><strong>Features</strong>:<br />
+- Email/password authentication<br />
+- OAuth2/SAML SSO integration (mocked)<br />
+- Demo mode for quick role-based login<br />
+- MFA support (framework ready)</p>
+<p><strong>Security Controls</strong>:<br />
+- Input validation for email format<br />
+- Password masking<br />
+- Rate limiting hooks (to be implemented)<br />
+- Session initialization</p>
+<p><strong>Dependencies</strong>:<br />
+- <code>services.auth_service</code><br />
+- <code>streamlit</code></p>
+<p><strong>Data Flow</strong>:</p>
+<pre><code>User Input → Validation → Auth Manager → Session Creation → Redirect
+</code></pre>
+<hr />
+<h4 id="pages01_engineer_viewpy-engineer-dashboard"><code>pages/01_Engineer_View.py</code> - Engineer Dashboard</h4>
+<p><strong>Purpose</strong>: Sandbox management and resource monitoring for engineers</p>
+<p><strong>Features</strong>:<br />
+- Sandbox creation wizard<br />
+- Lifecycle controls (start/stop/restart)<br />
+- Real-time log streaming<br />
+- GPU telemetry visualization<br />
+- Resource mini-charts (CPU, memory, disk, network)<br />
+- Workspace file browser</p>
+<p><strong>Tabs</strong>:<br />
+1. <strong>Sandbox Management</strong> - Create, control, monitor sandboxes<br />
+2. <strong>GPU Telemetry</strong> - Real-time GPU metrics with Plotly gauges<br />
+3. <strong>Log Streaming</strong> - Live log viewing with pause/resume<br />
+4. <strong>Resources</strong> - System resource monitoring</p>
+<p><strong>Security Controls</strong>:<br />
+- ✅ Authentication check<br />
+- 🛡️ Role-based access (Engineer, SecOps, CISO, Admin)<br />
+- 📝 Audit logging for all sandbox operations</p>
+<p><strong>Dependencies</strong>:<br />
+- <code>components.sandbox_form</code><br />
+- <code>components.log_streamer</code><br />
+- <code>components.file_browser</code><br />
+- <code>components.resource_charts</code><br />
+- <code>services.instance_manager</code><br />
+- <code>services.gpu_monitor</code></p>
+<hr />
+<h4 id="pages02_secops_viewpy-security-operations-center"><code>pages/02_SecOps_View.py</code> - Security Operations Center</h4>
+<p><strong>Purpose</strong>: Security monitoring, request approval, and threat detection</p>
+<p><strong>Features</strong>:<br />
+- Network request queue with risk scoring<br />
+- Agent reputation dashboard<br />
+- Security alerts with severity classification<br />
+- Policy violation tracking<br />
+- Quick emergency actions</p>
+<p><strong>Tabs</strong>:<br />
+1. <strong>Request Queue</strong> - Approve/deny network requests<br />
+2. <strong>Agent Reputation</strong> - Track agent behavior scores<br />
+3. <strong>Security Alerts</strong> - Real-time threat detection<br />
+4. <strong>Policy Violations</strong> - Compliance violations</p>
+<p><strong>Security Controls</strong>:<br />
+- ✅ Authentication required<br />
+- 🛡️ SecOps role or higher required<br />
+- 📝 All actions audit-logged<br />
+- 🔐 All security events tracked</p>
+<p><strong>Dependencies</strong>:<br />
+- <code>components.request_queue</code><br />
+- <code>components.agent_reputation</code><br />
+- <code>components.security_alerts</code></p>
+<hr />
+<h4 id="pages03_ciso_viewpy-executive-dashboard"><code>pages/03_CISO_View.py</code> - Executive Dashboard</h4>
+<p><strong>Purpose</strong>: Executive reporting, compliance monitoring, and governance</p>
+<p><strong>Features</strong>:<br />
+- Executive summary with KPIs<br />
+- Security scorecard with visualizations<br />
+- Compliance framework tracking<br />
+- Audit trail viewer<br />
+- Policy management interface</p>
+<p><strong>Tabs</strong>:<br />
+1. <strong>Executive Summary</strong> - High-level metrics and trends<br />
+2. <strong>Security Scorecard</strong> - Domain-based security posture<br />
+3. <strong>Compliance Overview</strong> - SOC2, GDPR, ISO27001, NIST tracking<br />
+4. <strong>Audit Trail</strong> - Forensic event viewing<br />
+5. <strong>Policy Management</strong> - Security policy configuration</p>
+<p><strong>Security Controls</strong>:<br />
+- ✅ CISO/Admin roles only<br />
+- 🛡️ Read-heavy permissions<br />
+- 📝 Audit access logged<br />
+- 🔐 Sensitive data access tracked</p>
+<p><strong>Dependencies</strong>:<br />
+- <code>components.executive_summary</code><br />
+- <code>components.security_scorecard</code><br />
+- <code>components.compliance_overview</code><br />
+- <code>components.audit_trail</code><br />
+- <code>components.policy_management</code></p>
+<hr />
+<h4 id="pages04_settingspy-instance-management"><code>pages/04_Settings.py</code> - Instance Management</h4>
+<p><strong>Purpose</strong>: Configure and manage NemoClaw/OpenShell instances</p>
+<p><strong>Features</strong>:<br />
+- Add new instances<br />
+- Edit instance configuration<br />
+- Test connectivity<br />
+- View instance health status</p>
+<p><strong>Security Controls</strong>:<br />
+- ✅ Admin role required<br />
+- 🛡️ System-level permissions<br />
+- 📝 All configuration changes logged<br />
+- 🔐 API keys stored in secrets vault</p>
+<p><strong>Dependencies</strong>:<br />
+- <code>services.instance_manager</code><br />
+- <code>services.openshell</code></p>
+<hr />
+<h4 id="pages05_health_monitorpy-system-health-dashboard"><code>pages/05_Health_Monitor.py</code> - System Health Dashboard</h4>
+<p><strong>Purpose</strong>: Self-assessment and operational integrity monitoring</p>
+<p><strong>Features</strong>:<br />
+- Real-time health checks<br />
+- Anomaly detection display<br />
+- Remediation suggestions<br />
+- Export capabilities (JSON/text)<br />
+- Auto-refresh option</p>
+<p><strong>Security Controls</strong>:<br />
+- ✅ Any authenticated user<br />
+- 🛡️ Least-privilege health checks<br />
+- 📝 Health assessments logged<br />
+- 🔐 Reports cryptographically signed</p>
+<p><strong>Dependencies</strong>:<br />
+- <code>components.health_dashboard</code><br />
+- <code>services.health_monitor</code><br />
+- <code>services.health_checks</code></p>
+<hr />
+<h3 id="22-ui-components">2.2 UI Components</h3>
+<h4 id="componentssandbox_formpy-sandbox-creation-wizard"><code>components/sandbox_form.py</code> - Sandbox Creation Wizard</h4>
+<p><strong>Purpose</strong>: Guided sandbox creation with validation</p>
+<p><strong>Classes/Functions</strong>:<br />
+- <code>render_sandbox_form()</code> - Multi-step creation form<br />
+- <code>render_quick_create()</code> - Simplified single-step form<br />
+- <code>validate_sandbox_config()</code> - Configuration validation</p>
+<p><strong>Security Controls</strong>:<br />
+- Input sanitization for sandbox names<br />
+- Resource limit validation<br />
+- User permission checks</p>
+<p><strong>Data Inputs</strong>:<br />
+- Sandbox name (validated: <code>[a-zA-Z0-9_-]{3,64}</code>)<br />
+- GPU requirements<br />
+- Resource limits (CPU, memory, storage)<br />
+- Environment variables</p>
+<hr />
+<h4 id="componentsfile_browserpy-workspace-file-manager"><code>components/file_browser.py</code> - Workspace File Manager</h4>
+<p><strong>Purpose</strong>: Browse, upload, and download files in sandbox workspaces</p>
+<p><strong>Functions</strong>:<br />
+- <code>render_file_browser()</code> - File tree navigation<br />
+- <code>upload_file()</code> - Secure file upload<br />
+- <code>download_file()</code> - File download<br />
+- <code>delete_file()</code> - File deletion</p>
+<p><strong>Security Controls</strong>:<br />
+- Path traversal prevention<br />
+- File type restrictions<br />
+- Size limits<br />
+- Audit logging for file operations</p>
+<p><strong>Constraints</strong>:<br />
+- Max file size: 100MB<br />
+- Allowed extensions: configurable<br />
+- No executable uploads</p>
+<hr />
+<h4 id="componentslog_streamerpy-real-time-log-viewer"><code>components/log_streamer.py</code> - Real-time Log Viewer</h4>
+<p><strong>Purpose</strong>: Stream and display sandbox logs in real-time</p>
+<p><strong>Features</strong>:<br />
+- Thread-based log streaming<br />
+- Pause/resume functionality<br />
+- Auto-scroll toggle<br />
+- Log filtering</p>
+<p><strong>Security Controls</strong>:<br />
+- Rate limiting on log access<br />
+- Sensitive data masking (passwords, tokens)<br />
+- Access logging</p>
+<p><strong>Technical Details</strong>:<br />
+- Background thread for streaming<br />
+- Thread-safe queue for UI updates<br />
+- Automatic cleanup on stop</p>
+<hr />
+<h4 id="componentsresource_chartspy-resource-visualization"><code>components/resource_charts.py</code> - Resource Visualization</h4>
+<p><strong>Purpose</strong>: Display system resource metrics using Plotly</p>
+<p><strong>Charts</strong>:<br />
+- CPU utilization gauge<br />
+- Memory usage gauge<br />
+- Disk usage gauge<br />
+- Network I/O charts</p>
+<p><strong>Data Sources</strong>:<br />
+- psutil (system metrics)<br />
+- pynvml (GPU metrics)<br />
+- Custom metrics from instances</p>
+<hr />
+<h4 id="componentsrequest_queuepy-network-request-management"><code>components/request_queue.py</code> - Network Request Management</h4>
+<p><strong>Purpose</strong>: Display and manage network request approvals</p>
+<p><strong>Features</strong>:<br />
+- Request listing with filters<br />
+- Risk score display (0-100)<br />
+- Approve/deny actions<br />
+- Bulk operations<br />
+- Request detail view</p>
+<p><strong>Security Controls</strong>:<br />
+- Approval requires SecOps+ role<br />
+- All decisions logged<br />
+- Risk factors explained</p>
+<hr />
+<h4 id="componentsagent_reputationpy-agent-behavior-tracking"><code>components/agent_reputation.py</code> - Agent Behavior Tracking</h4>
+<p><strong>Purpose</strong>: Display agent reputation scores and trends</p>
+<p><strong>Visualizations</strong>:<br />
+- Reputation score trend chart<br />
+- Risk factor breakdown<br />
+- Historical analysis</p>
+<p><strong>Data Model</strong>:<br />
+- Agent ID<br />
+- Current score (0-100)<br />
+- Risk factors<br />
+- Score history</p>
+<hr />
+<h4 id="componentssecurity_alertspy-threat-detection-display"><code>components/security_alerts.py</code> - Threat Detection Display</h4>
+<p><strong>Purpose</strong>: Real-time security alert monitoring</p>
+<p><strong>Features</strong>:<br />
+- Alert listing with severity<br />
+- Alert acknowledgment<br />
+- Filter by severity/type<br />
+- Alert detail view<br />
+- Evidence display</p>
+<p><strong>Alert Severities</strong>:<br />
+- Critical (immediate action)<br />
+- High (urgent attention)<br />
+- Medium (scheduled review)<br />
+- Low (informational)</p>
+<hr />
+<h4 id="componentsexecutive_summarypy-executive-kpi-dashboard"><code>components/executive_summary.py</code> - Executive KPI Dashboard</h4>
+<p><strong>Purpose</strong>: High-level security and compliance metrics for executives</p>
+<p><strong>Metrics</strong>:<br />
+- Security posture score<br />
+- Active incidents<br />
+- Compliance status<br />
+- Resource utilization<br />
+- 30-day trends</p>
+<p><strong>Visualizations</strong>:<br />
+- Summary cards<br />
+- Trend charts<br />
+- Quick insights</p>
+<hr />
+<h4 id="componentssecurity_scorecardpy-security-posture-visualization"><code>components/security_scorecard.py</code> - Security Posture Visualization</h4>
+<p><strong>Purpose</strong>: Detailed security domain analysis</p>
+<p><strong>Features</strong>:<br />
+- Radar chart for security domains<br />
+- Risk matrix (probability vs impact)<br />
+- Risk register table</p>
+<p><strong>Security Domains</strong>:<br />
+- Access Control<br />
+- Data Protection<br />
+- Network Security<br />
+- Monitoring<br />
+- Incident Response</p>
+<hr />
+<h4 id="componentscompliance_overviewpy-compliance-tracking"><code>components/compliance_overview.py</code> - Compliance Tracking</h4>
+<p><strong>Purpose</strong>: Monitor compliance with security frameworks</p>
+<p><strong>Frameworks</strong>:<br />
+- SOC 2 Type II<br />
+- GDPR<br />
+- ISO 27001<br />
+- NIST CSF</p>
+<p><strong>Features</strong>:<br />
+- Framework status dashboard<br />
+- Control compliance matrix<br />
+- Audit schedule<br />
+- Evidence management</p>
+<hr />
+<h4 id="componentsaudit_trailpy-audit-event-viewer"><code>components/audit_trail.py</code> - Audit Event Viewer</h4>
+<p><strong>Purpose</strong>: Forensic audit log viewing and analysis</p>
+<p><strong>Features</strong>:<br />
+- Event timeline<br />
+- Filtering by type/severity/user<br />
+- Event details<br />
+- Export capabilities</p>
+<p><strong>Event Types</strong>:<br />
+- User actions (login, logout, CRUD)<br />
+- System events (start, stop, config changes)<br />
+- Security events (alerts, violations)</p>
+<hr />
+<h4 id="componentspolicy_managementpy-policy-configuration"><code>components/policy_management.py</code> - Policy Configuration</h4>
+<p><strong>Purpose</strong>: Configure and manage security policies</p>
+<p><strong>Features</strong>:<br />
+- Policy listing<br />
+- Policy creation wizard<br />
+- Enforcement mode selection<br />
+- Policy details</p>
+<p><strong>Policy Types</strong>:<br />
+- Network policies<br />
+- Access policies<br />
+- Data policies<br />
+- Resource policies<br />
+- Compliance policies<br />
+- Behavior policies</p>
+<p><strong>Enforcement Modes</strong>:<br />
+- Enforce (block violations)<br />
+- Audit (log only)<br />
+- Warn (alert but allow)<br />
+- Disabled (inactive)</p>
+<hr />
+<h4 id="componentsuser_managementpy-user-administration"><code>components/user_management.py</code> - User Administration</h4>
+<p><strong>Purpose</strong>: Manage users, roles, and permissions</p>
+<p><strong>Features</strong>:<br />
+- User listing with filters<br />
+- Add/edit/deactivate users<br />
+- Role assignment<br />
+- Permission auditing</p>
+<p><strong>Roles</strong>:<br />
+- Admin (full access)<br />
+- CISO (security/compliance view)<br />
+- SecOps (security operations)<br />
+- Engineer (sandbox management)<br />
+- Viewer (read-only)</p>
+<hr />
+<h4 id="componentsaudit_exportpy-audit-log-export"><code>components/audit_export.py</code> - Audit Log Export</h4>
+<p><strong>Purpose</strong>: Export audit logs in various formats</p>
+<p><strong>Formats</strong>:<br />
+- JSON (SIEM integration)<br />
+- CSV (spreadsheet analysis)<br />
+- PDF (human-readable reports)<br />
+- Syslog (centralized logging)<br />
+- CEF (ArcSight, LogRhythm)<br />
+- LEEF (QRadar)</p>
+<p><strong>Features</strong>:<br />
+- Date range selection<br />
+- Filter by event type<br />
+- Scheduled reports</p>
+<hr />
+<h4 id="componentshealth_dashboardpy-health-monitoring-ui"><code>components/health_dashboard.py</code> - Health Monitoring UI</h4>
+<p><strong>Purpose</strong>: Visual interface for health monitoring</p>
+<p><strong>Features</strong>:<br />
+- Overall status indicator<br />
+- Status breakdown charts<br />
+- Anomaly display<br />
+- Check details<br />
+- Remediation suggestions<br />
+- Export options</p>
+<p><strong>Visualizations</strong>:<br />
+- Status pie chart<br />
+- Anomaly list<br />
+- Check result cards<br />
+- Metric trends</p>
+<hr />
+<h2 id="3-service-layer-components">3. Service Layer Components</h2>
+<h3 id="31-core-services">3.1 Core Services</h3>
+<h4 id="servicesauth_servicepy-authentication-authorization"><code>services/auth_service.py</code> - Authentication &amp; Authorization</h4>
+<p><strong>Purpose</strong>: Manage user authentication and access control</p>
+<p><strong>Classes</strong>:<br />
+- <code>AuthManager</code> - Central authentication service<br />
+- <code>UserRole</code> (Enum) - Role definitions<br />
+- <code>AuthProvider</code> (Enum) - Auth provider types<br />
+- <code>User</code> (dataclass) - User entity<br />
+- <code>Session</code> (dataclass) - Session entity</p>
+<p><strong>Permissions</strong> (15 total):</p>
+<pre><code class="language-python">VIEW_SANDBOXES, CREATE_SANDBOX, DELETE_SANDBOX, START_STOP_SANDBOX
+VIEW_LOGS, VIEW_GPU_METRICS, VIEW_REQUEST_QUEUE, APPROVE_REQUESTS
+VIEW_SECURITY_ALERTS, ACKNOWLEDGE_ALERTS, VIEW_COMPLIANCE
+MANAGE_POLICIES, VIEW_AUDIT_TRAIL, MANAGE_USERS, SYSTEM_ADMIN
+</code></pre>
+<p><strong>Role Permissions Matrix</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Permissions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Admin</td>
+<td>All 15 permissions</td>
+</tr>
+<tr>
+<td>CISO</td>
+<td>7 view-only permissions (audit, compliance, security)</td>
+</tr>
+<tr>
+<td>SecOps</td>
+<td>7 permissions (alerts, requests, sandboxes)</td>
+</tr>
+<tr>
+<td>Engineer</td>
+<td>6 permissions (sandbox management)</td>
+</tr>
+<tr>
+<td>Viewer</td>
+<td>3 permissions (view sandboxes, logs, metrics)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Methods</strong>:<br />
+- <code>authenticate(email, password)</code> - Local auth<br />
+- <code>authenticate_oauth(token, provider)</code> - SSO auth<br />
+- <code>has_permission(user, permission)</code> - Permission check<br />
+- <code>create_user(email, name, role)</code> - User creation<br />
+- <code>change_user_role(user_id, new_role)</code> - Role update</p>
+<p><strong>Security Features</strong>:<br />
+- Password hashing (PBKDF2 - to be implemented)<br />
+- Session management<br />
+- MFA support<br />
+- Audit logging</p>
+<hr />
+<h4 id="servicesinstance_managerpy-instance-lifecycle-management"><code>services/instance_manager.py</code> - Instance Lifecycle Management</h4>
+<p><strong>Purpose</strong>: Manage NemoClaw/OpenShell instances</p>
+<p><strong>Class</strong>: <code>InstanceManager</code></p>
+<p><strong>Methods</strong>:<br />
+- <code>list_instances()</code> - Get all instances<br />
+- <code>get_instance(instance_id)</code> - Get specific instance<br />
+- <code>add_instance(config)</code> - Add new instance<br />
+- <code>check_health(instance_id)</code> - Health check<br />
+- <code>connect(instance_id)</code> - Establish connection</p>
+<p><strong>Data Model</strong>:<br />
+- Instance ID<br />
+- Name, host, port<br />
+- API credentials (stored in vault)<br />
+- Status (online/offline/error)<br />
+- GPU count<br />
+- Configuration</p>
+<hr />
+<h4 id="servicesopenshellpy-openshell-cli-wrapper"><code>services/openshell.py</code> - OpenShell CLI Wrapper</h4>
+<p><strong>Purpose</strong>: Interface with OpenShell/NemoClaw CLI</p>
+<p><strong>Class</strong>: <code>OpenShellService</code></p>
+<p><strong>Methods</strong>:<br />
+- <code>execute(command, instance_id)</code> - Execute CLI command<br />
+- <code>create_sandbox(config)</code> - Create sandbox<br />
+- <code>start_sandbox(sandbox_id)</code> - Start sandbox<br />
+- <code>stop_sandbox(sandbox_id)</code> - Stop sandbox<br />
+- <code>get_logs(sandbox_id, lines)</code> - Retrieve logs</p>
+<p><strong>Security</strong>:<br />
+- SSH key-based authentication<br />
+- Command validation<br />
+- Timeout handling<br />
+- Error sanitization</p>
+<hr />
+<h4 id="servicesgpu_monitorpy-gpu-telemetry"><code>services/gpu_monitor.py</code> - GPU Telemetry</h4>
+<p><strong>Purpose</strong>: Monitor GPU metrics using NVML</p>
+<p><strong>Class</strong>: <code>GpuMonitor</code></p>
+<p><strong>Metrics</strong>:<br />
+- Temperature (°C)<br />
+- Utilization (%)<br />
+- Memory usage (MB)<br />
+- Power draw (W)<br />
+- Fan speed (%)<br />
+- Clock speeds (MHz)</p>
+<p><strong>Methods</strong>:<br />
+- <code>get_gpu_metrics(instance_id)</code> - Get all GPU metrics<br />
+- <code>get_gpu_count()</code> - Number of GPUs<br />
+- <code>check_gpu_health()</code> - GPU health status</p>
+<hr />
+<h4 id="servicestenant_managerpy-multi-tenancy-management"><code>services/tenant_manager.py</code> - Multi-tenancy Management</h4>
+<p><strong>Purpose</strong>: Manage tenants, teams, and resource quotas</p>
+<p><strong>Classes</strong>:<br />
+- <code>Tenant</code> (dataclass) - Organization entity<br />
+- <code>Team</code> (dataclass) - Team entity<br />
+- <code>TenantManager</code> - Management service</p>
+<p><strong>Tenant Tiers</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Tier</th>
+<th>Instances</th>
+<th>Users</th>
+<th>Storage</th>
+<th>Multi-Region</th>
+<th>Advanced Security</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Starter</td>
+<td>3</td>
+<td>10</td>
+<td>100 GB</td>
+<td>❌</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>Professional</td>
+<td>10</td>
+<td>50</td>
+<td>500 GB</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Enterprise</td>
+<td>100</td>
+<td>500</td>
+<td>5 TB</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Methods</strong>:<br />
+- <code>create_tenant(name, domain, tier)</code> - Create tenant<br />
+- <code>get_tenant(tenant_id)</code> - Get tenant<br />
+- <code>update_tenant_tier(tenant_id, new_tier)</code> - Upgrade/downgrade<br />
+- <code>create_team(tenant_id, name)</code> - Create team<br />
+- <code>get_usage_report(tenant_id)</code> - Resource usage</p>
+<hr />
+<h4 id="serviceshealth_monitorpy-health-monitoring-service"><code>services/health_monitor.py</code> - Health Monitoring Service</h4>
+<p><strong>Purpose</strong>: Continuous self-assessment and anomaly detection</p>
+<p><strong>Classes</strong>:<br />
+- <code>SecureHealthMonitor</code> - Core monitoring service<br />
+- <code>HealthCheckResult</code> (dataclass) - Individual check result<br />
+- <code>HealthReport</code> (dataclass) - Complete health report<br />
+- <code>AnomalyEvent</code> (dataclass) - Detected anomaly</p>
+<p><strong>Enums</strong>:<br />
+- <code>HealthStatus</code> - healthy, degraded, critical, unknown<br />
+- <code>SeverityLevel</code> - info, low, medium, high, critical<br />
+- <code>CheckType</code> - service_availability, configuration_integrity, etc.</p>
+<p><strong>Features</strong>:<br />
+- Tamper-resistant reports (HMAC-SHA256)<br />
+- Integrity validation (SHA-256)<br />
+- Rate limiting (60 checks/minute)<br />
+- Execution isolation (threads)<br />
+- Audit logging</p>
+<p><strong>Methods</strong>:<br />
+- <code>run_assessment()</code> - Execute health checks<br />
+- <code>detect_anomalies(report)</code> - Find anomalies<br />
+- <code>get_remediation_suggestions(report)</code> - Safe recommendations<br />
+- <code>export_report_json(report)</code> - SIEM export<br />
+- <code>export_report_human(report)</code> - Human-readable</p>
+<hr />
+<h4 id="serviceshealth_checkspy-built-in-health-checks"><code>services/health_checks.py</code> - Built-in Health Checks</h4>
+<p><strong>Purpose</strong>: Pre-configured health checks for system components</p>
+<p><strong>Checks</strong> (7 total):</p>
+<ol>
+<li><strong>check_service_availability()</strong> - Core services online</li>
+<li><strong>check_configuration_integrity()</strong> - Config files valid</li>
+<li><strong>check_access_control()</strong> - Auth system working</li>
+<li><strong>check_dependency_health()</strong> - Required packages installed</li>
+<li><strong>check_data_flow()</strong> - Serialization working</li>
+<li><strong>check_performance()</strong> - Response times acceptable</li>
+<li><strong>check_security_posture()</strong> - Security settings correct</li>
+</ol>
+<p><strong>Registration</strong>:</p>
+<pre><code class="language-python">register_all_checks(health_monitor)  # Registers all 7 checks
+</code></pre>
+<hr />
+<h3 id="32-utility-services">3.2 Utility Services</h3>
+<h4 id="utilsconfigpy-configuration-management"><code>utils/config.py</code> - Configuration Management</h4>
+<p><strong>Purpose</strong>: Load and manage application configuration</p>
+<p><strong>Functions</strong>:<br />
+- <code>load_config()</code> - Load YAML configuration<br />
+- <code>get_setting(key)</code> - Get specific setting<br />
+- <code>validate_config()</code> - Validate configuration</p>
+<hr />
+<h4 id="utilsstylingpy-ui-styling-utilities"><code>utils/styling.py</code> - UI Styling Utilities</h4>
+<p><strong>Purpose</strong>: Consistent UI theming and components</p>
+<p><strong>Functions</strong>:<br />
+- <code>apply_theme(theme_config)</code> - Apply theme<br />
+- <code>render_header(instance_manager)</code> - Render app header<br />
+- <code>render_card(title, content)</code> - Styled card component</p>
+<hr />
+<h4 id="utilserror_handlingpy-error-management"><code>utils/error_handling.py</code> - Error Management</h4>
+<p><strong>Purpose</strong>: Robust error handling and retry logic</p>
+<p><strong>Classes</strong>:<br />
+- <code>CircuitBreaker</code> - Fail-fast pattern<br />
+- <code>RetryHandler</code> - Exponential backoff</p>
+<p><strong>Decorators</strong>:<br />
+- <code>@retry(max_attempts, backoff)</code> - Retry decorator<br />
+- <code>@circuit_breaker(threshold, timeout)</code> - Circuit breaker decorator</p>
+<hr />
+<h4 id="utilssecurity_hardeningpy-security-utilities"><code>utils/security_hardening.py</code> - Security Utilities</h4>
+<p><strong>Purpose</strong>: Security hardening utilities</p>
+<p><strong>Classes</strong>:<br />
+- <code>SecurityHardening</code> - Password hashing, validation<br />
+- <code>RateLimiter</code> - Request rate limiting<br />
+- <code>InputValidator</code> - Input sanitization</p>
+<p><strong>Methods</strong>:<br />
+- <code>hash_password(password)</code> - PBKDF2 hashing<br />
+- <code>verify_password(password, hash, salt)</code> - Password verification<br />
+- <code>sanitize_input(value)</code> - Input sanitization<br />
+- <code>validate_email(email)</code> - Email validation<br />
+- <code>validate_password_strength(password)</code> - Strength check</p>
+<hr />
+<h2 id="4-data-layer">4. Data Layer</h2>
+<h3 id="41-data-models">4.1 Data Models</h3>
+<p>See <code>docs/DATABASE_SCHEMA.md</code> for complete schema documentation.</p>
+<p><strong>Key Entities</strong>:<br />
+- Users &amp; Sessions (Authentication)<br />
+- Tenants &amp; Teams (Multi-tenancy)<br />
+- Instances &amp; Sandboxes (Core Resources)<br />
+- Audit Logs (Compliance)<br />
+- Security Alerts (Monitoring)<br />
+- Health Reports (Operations)</p>
+<h3 id="42-data-flow-summary">4.2 Data Flow Summary</h3>
+<pre><code>User Request
+    ↓
+Authentication (Auth Service)
+    ↓
+Authorization (RBAC Engine)
+    ↓
+Input Validation (Security Hardening)
+    ↓
+Business Logic (Service Layer)
+    ↓
+Audit Logging (Immutable Store)
+    ↓
+Database Operations (PostgreSQL)
+    ↓
+Response
+</code></pre>
+<hr />
+<h2 id="5-component-interaction-diagram">5. Component Interaction Diagram</h2>
+<pre><code class="language-mermaid">flowchart TB
+    subgraph &quot;Frontend&quot;
+        F1[Login Page]
+        F2[Engineer View]
+        F3[SecOps View]
+        F4[CISO View]
+        F5[Health Monitor]
+    end
+
+    subgraph &quot;Components&quot;
+        C1[Sandbox Form]
+        C2[Log Streamer]
+        C3[File Browser]
+        C4[Resource Charts]
+        C5[Request Queue]
+        C6[Security Alerts]
+        C7[Executive Summary]
+        C8[Health Dashboard]
+    end
+
+    subgraph &quot;Services&quot;
+        S1[Auth Service]
+        S2[Instance Manager]
+        S3[GPU Monitor]
+        S4[Health Monitor]
+        S5[Tenant Manager]
+    end
+
+    subgraph &quot;External&quot;
+        E1[NemoClaw Instances]
+        E2[GPU Cluster]
+    end
+
+    F1 --&gt; S1
+    F2 --&gt; C1 &amp; C2 &amp; C3 &amp; C4
+    F3 --&gt; C5 &amp; C6
+    F4 --&gt; C7
+    F5 --&gt; C8
+
+    C1 &amp; C2 &amp; C3 --&gt; S2
+    C4 --&gt; S3
+    C5 &amp; C6 --&gt; S2
+    C8 --&gt; S4
+
+    S2 --&gt; E1
+    S3 --&gt; E2
+
+    S1 -.-&gt;|Auth Check| S2 &amp; S3 &amp; S4
+</code></pre>
+<hr />
+<h2 id="6-component-dependencies">6. Component Dependencies</h2>
+<h3 id="dependency-graph">Dependency Graph</h3>
+<pre><code>app.py
+├── pages/00_Login.py
+│   └── services/auth_service.py
+├── pages/01_Engineer_View.py
+│   ├── components/sandbox_form.py
+│   ├── components/log_streamer.py
+│   ├── components/file_browser.py
+│   ├── components/resource_charts.py
+│   ├── services/instance_manager.py
+│   └── services/gpu_monitor.py
+├── pages/02_SecOps_View.py
+│   ├── components/request_queue.py
+│   ├── components/agent_reputation.py
+│   ├── components/security_alerts.py
+│   └── services/instance_manager.py
+├── pages/03_CISO_View.py
+│   ├── components/executive_summary.py
+│   ├── components/security_scorecard.py
+│   ├── components/compliance_overview.py
+│   ├── components/audit_trail.py
+│   └── components/policy_management.py
+├── pages/04_Settings.py
+│   └── services/instance_manager.py
+└── pages/05_Health_Monitor.py
+    ├── components/health_dashboard.py
+    ├── services/health_monitor.py
+    └── services/health_checks.py
+
+services/auth_service.py
+└── utils/security_hardening.py
+
+services/health_monitor.py
+└── utils/security_hardening.py
+
+All pages
+└── services/auth_service.py (require_auth)
+</code></pre>
+<hr />
+<h2 id="7-testing-components">7. Testing Components</h2>
+<h3 id="71-unit-testing">7.1 Unit Testing</h3>
+<p><strong>Recommended Test Structure</strong>:</p>
+<pre><code>tests/
+├── unit/
+│   ├── services/
+│   │   ├── test_auth_service.py
+│   │   ├── test_health_monitor.py
+│   │   └── test_instance_manager.py
+│   ├── components/
+│   │   ├── test_sandbox_form.py
+│   │   └── test_security_alerts.py
+│   └── utils/
+│       ├── test_security_hardening.py
+│       └── test_error_handling.py
+├── integration/
+│   └── test_end_to_end.py
+└── security/
+    └── test_authentication.py
+</code></pre>
+<h3 id="72-component-test-examples">7.2 Component Test Examples</h3>
+<pre><code class="language-python"># Example: Testing Auth Service
+import pytest
+from services.auth_service import AuthManager, UserRole
+
+def test_authenticate_valid_user():
+    auth = AuthManager()
+    user = auth.authenticate(&quot;admin@company.com&quot;, &quot;password&quot;)
+    assert user is not None
+    assert user.role == UserRole.ADMIN
+
+def test_has_permission_admin():
+    auth = AuthManager()
+    user = auth._users[&quot;user-001&quot;]
+    assert auth.has_permission(user, &quot;system_admin&quot;)
+
+def test_rate_limiting():
+    from utils.security_hardening import RateLimiter
+    limiter = RateLimiter(max_requests=5, window_seconds=60)
+
+    # Should allow 5 requests
+    for i in range(5):
+        assert limiter.is_allowed(&quot;test-key&quot;)
+
+    # 6th request should be denied
+    assert not limiter.is_allowed(&quot;test-key&quot;)
+</code></pre>
+<hr />
+<h2 id="8-performance-considerations">8. Performance Considerations</h2>
+<h3 id="81-component-performance-guidelines">8.1 Component Performance Guidelines</h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Target Response</th>
+<th>Optimization</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Auth Service</strong></td>
+<td>&lt; 100ms</td>
+<td>Redis caching for sessions</td>
+</tr>
+<tr>
+<td><strong>Health Monitor</strong></td>
+<td>&lt; 500ms</td>
+<td>Async checks, caching</td>
+</tr>
+<tr>
+<td><strong>GPU Monitor</strong></td>
+<td>&lt; 200ms</td>
+<td>Cached metrics, 5s refresh</td>
+</tr>
+<tr>
+<td><strong>File Browser</strong></td>
+<td>&lt; 300ms</td>
+<td>Pagination, lazy loading</td>
+</tr>
+<tr>
+<td><strong>Log Streamer</strong></td>
+<td>Real-time</td>
+<td>Background threads</td>
+</tr>
+</tbody>
+</table>
+<h3 id="82-caching-strategy">8.2 Caching Strategy</h3>
+<pre><code class="language-python"># Session cache (Redis)
+CACHE_TTL_SESSION = 3600  # 1 hour
+
+# Health status cache
+CACHE_TTL_HEALTH = 60  # 1 minute
+
+# GPU metrics cache
+CACHE_TTL_GPU = 5  # 5 seconds
+
+# User permissions cache
+CACHE_TTL_PERMISSIONS = 300  # 5 minutes
+</code></pre>
+<hr />
+<h2 id="9-security-checklist-by-component">9. Security Checklist by Component</h2>
+<h3 id="91-authentication-components">9.1 Authentication Components</h3>
+<ul>
+<li>[ ] Password hashing (PBKDF2)</li>
+<li>[ ] Session timeout handling</li>
+<li>[ ] MFA verification</li>
+<li>[ ] Rate limiting on login</li>
+<li>[ ] Secure session tokens</li>
+</ul>
+<h3 id="92-authorization-components">9.2 Authorization Components</h3>
+<ul>
+<li>[ ] RBAC checks on all endpoints</li>
+<li>[ ] Permission validation</li>
+<li>[ ] Resource-level access control</li>
+<li>[ ] Audit logging</li>
+</ul>
+<h3 id="93-input-handling-components">9.3 Input Handling Components</h3>
+<ul>
+<li>[ ] Input validation</li>
+<li>[ ] SQL injection prevention</li>
+<li>[ ] XSS prevention</li>
+<li>[ ] File upload restrictions</li>
+<li>[ ] Path traversal prevention</li>
+</ul>
+<h3 id="94-data-access-components">9.4 Data Access Components</h3>
+<ul>
+<li>[ ] Encryption at rest</li>
+<li>[ ] Encryption in transit</li>
+<li>[ ] Secrets management</li>
+<li>[ ] Audit logging</li>
+<li>[ ] Data sanitization</li>
+</ul>
+<hr />
+<h2 id="10-deployment-notes">10. Deployment Notes</h2>
+<h3 id="101-component-initialization-order">10.1 Component Initialization Order</h3>
+<ol>
+<li>Configuration loading</li>
+<li>Secrets vault connection</li>
+<li>Database connection</li>
+<li>Cache (Redis) connection</li>
+<li>Auth service initialization</li>
+<li>Health monitor registration</li>
+<li>Web server startup</li>
+</ol>
+<h3 id="102-health-check-endpoints">10.2 Health Check Endpoints</h3>
+<pre><code class="language-python"># Health check endpoints for load balancers
+HEALTH_ENDPOINTS = {
+    &quot;/health/live&quot;: &quot;Liveness probe - app running&quot;,
+    &quot;/health/ready&quot;: &quot;Readiness probe - dependencies OK&quot;,
+    &quot;/health/startup&quot;: &quot;Startup probe - initialization complete&quot;
+}
+</code></pre>
+<hr />
+<p><strong>Version</strong>: 2.1.0<br />
+<strong>Classification</strong>: Internal Use<br />
+<strong>Next Review</strong>: April 27, 2026</p>
+<hr />
+<p><em>End of Component Documentation</em></p>
+    </div>
+    
+    <div class="footer">
+        <p>NemoClaw Enterprise Command Center v2.1.0</p>
+        <p>© 2026 | Author: <a href="https://www.linkedin.com/in/bhaskerkpatel/" target="_blank">Bhaskar Puppala</a></p>
+    </div>
+</body>
+</html>
